@@ -1,0 +1,61 @@
+import {seedProfile} from './profile-fixture.mjs';
+import {LOCATIONS} from '../src/systems.js';
+import { chromium } from '@playwright/test';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true});
+const errors=[];const page=await browser.newPage({viewport:{width:1280,height:850}});
+page.on('pageerror',e=>errors.push(e.message));
+const base=process.env.MAYA_URL||'http://localhost:5173';
+const snap=()=>page.evaluate(()=>window.__MAYA__.snapshot());
+const teleport=(x,z)=>page.evaluate(([x,z])=>window.__MAYA_TEST__.teleport(x,z),[x,z]);
+const at=id=>{const p=LOCATIONS.find(p=>p.id===id);return teleport(p.x,p.z);};
+const advance=s=>page.evaluate(s=>window.__MAYA_TEST__.advance(s),s);
+try{
+ await seedProfile(page);await page.goto(base+'/?test');await page.waitForFunction(()=>window.__MAYA_TEST__);await page.click('#start-button');await page.evaluate(()=>window.__MAYA__.assetsReady);
+ assert.equal(await page.locator('.topbar').count(),0);assert.equal(await page.locator('footer.controls').count(),0);
+ const initial=await snap();assert.equal(initial.buildingCount,64);assert.equal(initial.residentCount,44);assert.equal(initial.policeCount,4);assert.ok(initial.colliderCount>500);
+ assert.deepEqual(await page.evaluate(locations=>locations.filter(l=>window.__MAYA_TEST__.blocked(l.x,l.z,.65)).map(l=>l.id),LOCATIONS),[]);
+ assert.deepEqual(await page.evaluate(()=>window.__MAYA_TEST__.buildings().filter(b=>window.__MAYA_TEST__.blocked(b.door.x,b.door.z,.65))),[]);
+ console.log('PASS full-screen UI, expanded world, all building entrances, persistent population');
+ await page.evaluate(()=>{const t=window.__MAYA_TEST__;t.teleport(-89,-80);window.dispatchEvent(new KeyboardEvent('keydown',{key:'d'}));window.dispatchEvent(new KeyboardEvent('keydown',{key:'s'}));t.advance(1.2);window.dispatchEvent(new KeyboardEvent('keyup',{key:'d'}));window.dispatchEvent(new KeyboardEvent('keyup',{key:'s'}));});assert.ok((await snap()).x<-87);
+ console.log('PASS real movement stops at a tree trunk');
+ const home=await page.evaluate(()=>window.__MAYA_TEST__.buildings().find(b=>b.id==='home'));
+ await teleport(home.door.x,home.door.z);await page.keyboard.press('e');assert.equal((await snap()).interior,'home');
+ await page.evaluate(()=>window.__MAYA_TEST__.positionIndoor(-6.3,-1));await page.keyboard.press('e');assert.equal((await snap()).inventory.pistol,true);assert.equal((await snap()).weapon,'pistol');
+ await page.keyboard.press('v');assert.equal((await snap()).cameraMode,'shoulder');await page.keyboard.press('v');assert.equal((await snap()).cameraMode,'first');await page.screenshot({path:'/tmp/maya-first-person.png'});
+ await page.keyboard.press('v');await page.evaluate(()=>window.__MAYA_TEST__.positionIndoor(0,8.4));await page.keyboard.press('e');assert.equal((await snap()).interior,null);
+ console.log('PASS building entry/exit, starter equipment, shoulder and first-person modes');
+ await at('weapons');await page.keyboard.press('e');await page.click('#buy-rifle');await page.click('#shop-close');assert.equal((await snap()).inventory.rifle,true);
+ await page.keyboard.press('2');await teleport(-9,40);await page.evaluate(()=>window.__MAYA_TEST__.residentAt('resident-0',-9,35));
+ const ammo=(await snap()).inventory.pistolAmmo;
+ await page.evaluate(()=>{const t=window.__MAYA_TEST__;for(let i=0;i<5;i++){t.aimAt(-9,30);t.advance(.31);}});
+ const victim=await page.evaluate(()=>window.__MAYA_TEST__.people().find(p=>p.id==='resident-0'));
+ assert.equal(victim.dead,true);assert.equal((await snap()).inventory.pistolAmmo,ammo-5);assert.ok((await snap()).blood>=3);
+ await advance(1.5);assert.ok((await snap()).ambulances>=1);
+ console.log('PASS firearm purchase, ammunition consumption, victim damage/death, blood, ambulance dispatch');
+ await page.evaluate(()=>window.__MAYA_TEST__.heat(3));await advance(.1);assert.equal((await snap()).respondingPatrols,4);assert.equal((await snap()).helicopter,true);
+ await teleport(0,-300);await page.evaluate(()=>window.__MAYA_TEST__.heat(0));
+ await advance(40);
+ // Collision-aware crews may queue, but must finish before the 60-second body cleanup.
+ let response=await page.evaluate(()=>window.__MAYA_TEST__.emergency());
+ for(let waited=0;waited<12&&!response.incidents.some(i=>i.id==='resident-0'&&i.closed);waited++){await advance(1);response=await page.evaluate(()=>window.__MAYA_TEST__.emergency());}
+ assert.ok(response.incidents.some(i=>i.id==='resident-0'&&i.closed),'Medics must reach and treat the casualty before cleanup');
+
+ assert.equal((await page.evaluate(()=>window.__MAYA_TEST__.people().find(p=>p.id==='resident-0'))).removed,true);
+ await advance(25);
+ assert.equal(await page.evaluate(()=>window.__MAYA_TEST__.effects().filter(e=>e.blood&&window.__MAYA__.snapshot().elapsed-e.created>=60).length),0);
+ console.log('PASS multi-unit response, helicopter escalation, ambulance recovery, expired blood removal');
+ await teleport(0,70);const health=(await snap()).health;await page.evaluate(()=>window.__MAYA_TEST__.trafficImpact());await advance(.23);assert.ok((await snap()).health<health);assert.ok((await snap()).knocked>0);await advance(1);
+ console.log('PASS moving traffic physically injures a pedestrian instead of stopping instantly');
+ await page.evaluate(()=>window.__MAYA_TEST__.heat(0));await at('tea');await page.keyboard.press('e');await page.click('#accept-job');await at('temple');await page.keyboard.press('e');assert.equal((await snap()).campaign,1);
+ await at('clinic');await page.keyboard.press('e');await page.click('#story-next');assert.equal((await snap()).campaign,2);
+ await at('village');await page.keyboard.press('e');await page.click('#choose-community');assert.equal((await snap()).campaign,3);
+ const harbor=await page.evaluate(()=>window.__MAYA_TEST__.buildings().find(b=>b.id==='harbor'));
+ await teleport(harbor.door.x,harbor.door.z);await page.keyboard.press('e');assert.equal((await snap()).interior,'harbor');await page.evaluate(()=>window.__MAYA_TEST__.positionIndoor(0,-4));await page.keyboard.press('e');assert.equal((await snap()).campaign,4);
+ await at('village');await page.keyboard.press('e');await page.click('#story-next');await at('outlook');await page.keyboard.press('e');await page.click('#finish-story');assert.equal((await snap()).campaign,6);
+ console.log('PASS complete six-chapter community story, including the warehouse interior objective');
+ await page.keyboard.press('p');const save=await page.evaluate(()=>JSON.parse(localStorage.getItem('maya-city-v1')));assert.equal(save.version,2);assert.equal(save.residents['resident-0'].dead,true);assert.equal(save.campaign,6);assert.equal(save.inventory.rifle,true);
+ await page.reload();await page.waitForFunction(()=>window.__MAYA__?.ready);assert.equal((await snap()).campaign,6);assert.equal((await page.evaluate(()=>window.__MAYA_TEST__.people().find(p=>p.id==='resident-0'))).dead,true);
+ console.log('PASS save and restore of story, inventory, and persistent resident death');
+ assert.deepEqual(errors,[]);console.log('PASS no browser runtime errors');
+}catch(error){console.error('Emergency response',JSON.stringify(await page.evaluate(()=>window.__MAYA_TEST__.emergency())));console.error('Failure state',await snap(),await page.locator('#modal-body').innerText(),await page.locator('#context-prompt').count());throw error;}finally{await browser.close();}
