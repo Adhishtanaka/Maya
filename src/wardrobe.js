@@ -1,0 +1,5 @@
+import {dressPerson} from './actor-models.js';
+export const OUTFITS={arrival:{name:'Arrival linen',price:0,color:'#eed5a4',style:'casual'},harbor:{name:'Harbor work jacket',price:240,color:'#467582',style:'work'},burgundy:{name:'Burgundy evening jacket',price:420,color:'#a62646',style:'work'},olive:{name:'Olive streetwear',price:300,color:'#919947',style:'casual'},ivory:{name:'Ivory formalwear',price:550,color:'#faf7ee',style:'work'},sunset:{name:'Sunset shirt',price:260,color:'#d79161',style:'casual'}};
+export function normalizeWardrobe(raw={}){raw=raw&&typeof raw==='object'?raw:{};const owned=[...new Set(['arrival',...(Array.isArray(raw.owned)?raw.owned:[]).filter(k=>k in OUTFITS)])];return {owned,equipped:owned.includes(raw.equipped)?raw.equipped:'arrival'};}
+export function buyOutfit(s,id){const item=OUTFITS[id];if(!item)return false;if(!s.wardrobe.owned.includes(id)){if(s.money<item.price)return false;s.money-=item.price;s.wardrobe.owned.push(id);}s.wardrobe.equipped=id;return true;}
+export function wear(mesh,wardrobe){const item=OUTFITS[wardrobe.equipped]||OUTFITS.arrival;dressPerson(mesh,item.style,item.color);}
