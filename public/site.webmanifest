@@ -1,0 +1,27 @@
+{
+  "name": "MAYA \u2014 After the monsoon",
+  "short_name": "MAYA",
+  "description": "Explore a coastal city, drive and fly, meet its residents and build a life.",
+  "start_url": "./",
+  "display": "fullscreen",
+  "background_color": "#383536",
+  "theme_color": "#a62646",
+  "icons": [
+    {
+      "src": "/assets/maya-emblem.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maya-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/maya-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
