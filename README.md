@@ -1,124 +1,122 @@
-# MAYA — After the monsoon
+# MAYA: After the monsoon
 
-A browser-based, original South Asian city game built with Three.js and Vite. The development roadmap is [game.md](game.md); [DEVELOPMENT.md](DEVELOPMENT.md) distinguishes the current implementation from remaining production work.
+MAYA is an original browser-based South Asian city game built with Three.js and Vite. Start with a small apartment, a car outside, and a first errand for Amma. From there, the city is open: drive, take jobs, make contacts, race, fly, buy property, or follow the main story through the community and harbor.
 
-## Run and verify
+It is a playable prototype with a large set of connected systems. [DEVELOPMENT.md](DEVELOPMENT.md) records the current implementation, validation, and production limits. [Game.md](Game.md) contains the broader design roadmap.
+
+## Play it
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open the URL printed by Vite, enter your name and age on first launch, then select **Enter the city**. Audio starts after that click. The game requires WebGL. Models, code, and synthesized audio are served locally; fonts use the device’s system fonts; there are no API keys or runtime CDNs.
+Open the URL Vite prints, enter a display name and age on first launch, then choose **Enter the city**. The game needs WebGL. Models, code, and synthesized sound run locally. It uses system fonts and does not require API keys or runtime CDNs.
 
-```sh
-npm run build        # Production files in dist/
-npm run preview      # Serve the production build
-npm test             # Collision, navigation, schedules, weather, cleanup and save rules
-npm run test:browser  # Run with the dev server listening on port 5173
-npm run test:production # Run with npm run preview listening on port 4173
-```
+The cream car near the starting point is yours. Press **F** to enter it and come to a stop before exiting. Your apartment contains a free pistol and 36 rounds. Talk to Amma to begin the first delivery.
 
-Set `MAYA_URL` for a different test-server URL. Browser tests use Playwright Chromium. Expansion tests use a deterministic simulation harness available only in development with `?test`; that harness is excluded from the production build.
+## What is in the city
 
-## The current game
+### City, people, and interiors
 
-- **Expanded world:** 64 individually registered buildings, approximately 4.5 times the previous playable area, western neighborhoods, a village, farmland, an industrial harbor, coastal scenery, cloud forest, and northern highlands.
-- **Interiors:** every registered building has a doorway, a separate ground-floor scene and furnished upper rooms reached by stairs. A two-step work order at each address pays Rs. 220 once; progress survives saves. Furnished templates include apartments with rooms, houses, cabins, cafes, shops, garages, warehouses, the hospital, temple, sporting-goods store, bank, and community buildings. Interiors are created on entry and retained for the session.
-- **Solid world:** trees, rock faces, hills, buildings, street furniture, coast barriers, parked cars, and interior furniture block movement. Substepped motion prevents fast movers from tunneling through narrow obstacles. Navigation checks whole segments, and vehicles account for their front/rear clearance.
-- **Vehicles and shops:** ten road models have different acceleration, steering, mass, speed and body shapes. De Silva Motors sells cars and repairs them; purchases and paint persist in saves. Amma sells tea, rolls and rice meals, alongside the existing gun shop. Named residents drive traffic vehicles, get out after trips and visibly leave during theft. Entry/exit opens doors and takes time. Mass-based impacts push and spin cars; critical engine-vehicle damage starts a five-second fire warning, with immediate explosions at zero health. Bicycles disable without a fuel explosion.
-- **Traffic:** cars follow connected circuits with acceleration, braking distance, reaction time, wet-road handling, vehicle damage, and collisions. Sprinting in front of a moving car can injure the player. Residents look before crossing unless fleeing danger.
-- **Armed encounters:** four named Dockside Crew members carry pistols/carbines and retaliate to nearby player violence. Fallen crew members and officers drop weapons with ammunition. Serious crashes into pursuing police trigger armed dismounts even while you remain in your car.
-- **People:** 44 persistent named adult residents have individual biographies, dialogue, occupations, homes, workplaces, casual/work outfits, day or night shifts, relationships, and personal delivery favors. Body shapes, hair, jackets, skirts and colors vary across the adult cast; work and casual wardrobes change with their schedules. Jointed legs and elbows animate walking, sprinting and seated driving. Residents walk routes, enter buildings, flee danger, and remember harm or help. Death persists in saves.
-- **Combat:** melee, pistol, carbine, bazooka, ammunition, magazines, reload timing, visible weapon models, recoil, tracer effects, line-of-sight checks, civilian injury/death, and vehicle damage. Crouch, take nearby cover or dodge; sprinting and dodging consume stamina. Low cover blocks crouched targets until they expose themselves to fire. Blood fades during its last eight seconds and is disposed of after 60 seconds of active simulation. Corpses are collected by emergency crews or removed after 60 seconds; their resident identity remains deceased.
-- **Police and medical response:** four police units patrol and respond to witnessed incidents. Wanted levels escalate to armed response and helicopter search. Police pursue last-known positions; breaking sight eventually clears the search. Officers navigate on foot and aim before firing. Crouching, night and precipitation reduce detection distance. Four-star searches deploy two roadblock vehicles, and distant disabled patrol crews can be replaced. Two ambulances dispatch to injuries, reach the scene, deploy medics, recover casualties, and return to the hospital. Surviving residents recover; fatalities do not respawn.
-- **Story and optional jobs:** a six-chapter story beginning with Amma’s tea delivery, a choice between the community and harbor union, an indoor manifest objective, distinct outcomes, and a final gathering. Repeatable tea deliveries, personal favors, farm deliveries, and four race courses remain available: coastal sprint, a two-lap Old Town circuit, the Mistwood rally and Harbor Rivals against two named AI drivers. Each records a personal best; the opponent race pays by finishing position.
-- **The wages ledger:** find Ravi through the faction board, collect a separate ledger inside the harbor, and hear Deepa’s testimony. Publish with the union, file a police complaint, or sell the records to the crew. Payments, named relationships and district influence reflect the choice; lost witnesses affect the objective.
-- **Optional vault job:** plan at the bank marker, inspect the floor plan inside, acquire a toolkit, prepare an escape vehicle, open the vault under alarm, lose the police, and deliver the bag at South Harbor. This criminal path is separate from the main story.
-- **Property and factions:** buy a tea-stop partnership, harbor warehouse, or hill cabin. Businesses pay income every two minutes of active simulation. Community, harbor union, police, and Dockside Crew relationships change with relevant actions. The journal’s faction board offers four staged jobs. Finishing jobs changes district influence; the map shows who leads each district. Jobs earn a 10% bonus when their faction already leads there.
-- **Cameras:** elevated, over-the-shoulder, and first-person views, with aiming, visible first-person weapons, free mouse look, a following chase camera while driving, and camera collision. The compact HUD keeps details in menus and hides weapon information while driving. The persistent navbar and controls footer have been removed; controls are in Settings.
+The map includes western neighborhoods, a village, farmland, the industrial harbor, a coast, cloud forest, and northern highlands. It has 64 registered buildings. Each has an exterior entrance, a ground-floor scene, and furnished upper rooms reached by stairs. Buildings can contain apartments, houses, cabins, cafes, shops, garages, warehouses, the hospital, temple, bank, and community spaces.
 
-- **Transport and flight:** bicycles, motorcycles, vans and buses join the car fleet. The marked northern Air & Cycle Depot sells equipment and charters a utility helicopter and survey plane. Space/Ctrl climbs/descends; the plane needs forward speed. Jetpacks consume fuel, parachutes provide controlled landings, and low flight collides with scenery. These are simplified flight mechanics.
-- **Equipment and damage:** grenade fuses, remotely triggered C4 and missiles use finite ammunition, swept projectile movement, distance-based damage and wall obstruction. Pistol/carbine damage now falls with distance; a healthy target takes several hits.
-- **Neighborhood life:** three named school-age children and a guardian follow a separate noncombat school/park/home routine and change outfits. Ceylon Social Club opens its stage from 18:00 to 04:00, with four adult performers, individual dialogue, three synthesized music patterns and refreshments.
-- **Emblem branding:** the ivory/charcoal/burgundy/olive palette carries through menus, HUD and map. SVG/PNG favicons, Apple touch icons, a web manifest, descriptions and social-card metadata use the provided emblem.
+Forty-four named adult residents have jobs, homes, schedules, dialogue, relationships, clothes, and personal delivery favors. They walk routes, go indoors, flee danger, and remember help or harm. The city also has a small noncombat school-age family routine, club performers, dogs, deer, boars, and birds.
 
-## Start playing
+Every address also has a two-step work order. Read it downstairs, complete the two upstairs stations, and collect Rs. 220. Progress is saved.
 
-The cream car beside the starting point is yours. Press **F** to enter it. Stop before getting out.
+Trees, rock faces, hills, buildings, street furniture, coast barriers, parked cars, and interior furniture block movement. Substepped motion prevents fast actors from passing through narrow obstacles. Interiors are created when you enter and stay available for the rest of the session.
 
-Your apartment is marked on the map. Interact with its street marker to mark the actual doorway, then enter and inspect the equipment locker for a **free pistol and 36 rounds**. **Fernando Sporting Goods** sells firearms, ammunition, and the toolkit. Weapon access is available without completing the story.
+### Driving, traffic, and flight
 
-Talk to Amma for your first delivery. The mission card tracks the story; the journal records contacts and relationships. A faction job, favor, race, or vault job temporarily takes priority in the mission tracker. Business partnerships are available from Amma, South Harbor, and Mistwood.
+Ten road vehicle models have different mass, speed, steering, acceleration, and dimensions. You can buy and repair vehicles at De Silva Motors. Named residents drive traffic, leave their cars after trips, and visibly get out when you steal a vehicle. Doors animate during entry and exit. Collisions transfer momentum, can spin or damage vehicles, and can ignite critically damaged engines. Bicycles disable without exploding.
 
-Find **Maya Air & Cycle Depot** on the northern map for aircraft, jetpack, parachute, grenades, C4 and missiles. The equipment button or **I** opens equipment and sandbox codes. **Backtick** opens codes directly: `RUNFAST`, `SKYHIGH`, `AIRFLEET`, `ARMORY`, `POCKETS`, `PEACE`, `ARMOR`. Movement, infinite fuel and invulnerability toggles last only for the current session; cash and equipment save normally.
+Amma sells tea, rolls, and rice meals. Fernando Sporting Goods sells firearms, ammunition, and the vault-job toolkit. Four named Dockside Crew members carry pistols or carbines and retaliate to nearby player violence. Fallen crew members and officers can drop usable weapons and ammunition.
 
-Read a building’s work order near the right wall downstairs, use its stairs, then complete the two upstairs stations in order. Stand at each station for four seconds. Visit **Ceylon Social Club** after 18:00 for music and performances.
+Traffic uses connected road circuits, braking distance, wet-road handling, collision clearance, and recovery when a vehicle gets stuck. Police and ambulances share collision-aware road routing. Officers can leave a patrol car, pursue on foot, and walk back to it instead of teleporting into the driver's seat.
+
+The northern Maya Air & Cycle Depot provides bicycles, motorcycles, jetpacks, parachutes, a utility helicopter, and a survey plane. Flight uses simplified controls: helicopters climb vertically, planes need forward speed, and low flight hits scenery.
+
+### Combat, police, and recovery
+
+MAYA has melee, pistols, carbines, a bazooka, grenades, C4, and missiles. Weapons use finite ammunition, reloads, line-of-sight checks, visible effects, recoil, swept projectile movement, wall-blocked explosions, and distance-based damage. Crouch, use nearby cover, dodge, and manage stamina to stay alive. Blood clears after 60 seconds of active simulation. Emergency crews collect bodies when they arrive; a resident's death stays in the save.
+
+Witnessed crimes bring police attention. Four patrol units respond, wanted levels can call armed officers, a helicopter, and roadblocks, and medical crews travel to injuries. Officers aim before firing, use visibility rules, and can be delayed by walls or weather. Crouching, night, and rain reduce detection range. Four-star searches deploy two roadblock cars, and distant disabled patrol crews can be replaced.
+
+When your health reaches zero, the game shows a WASTED screen for three seconds. Input is locked during recovery, then you return to Maya General Hospital with full health and a Rs. 150 treatment charge. Death during a vehicle, interior, or on-foot encounter uses the same recovery flow.
+
+### Story, jobs, and city life
+
+The main story has six chapters. It starts with Amma's tea delivery and branches between the community and harbor union. Separate activities include:
+
+- Taxi, ambulance, courier, and walking-escort jobs
+- Personal favors, trusted contacts, and up to three recruited companions
+- Faction jobs that change district influence and payout bonuses
+- Four races, including the two-lap Old Town circuit and Harbor Rivals against named drivers. Each keeps a personal best, and Harbor Rivals pays by finishing position.
+- The wages-ledger investigation. Find Ravi, collect the harbor ledger, hear Deepa's testimony, then publish with the union, file a police complaint, or sell the records to the crew. The outcome changes payments, named relationships, and district influence.
+- A separate vault job with planning, a toolkit, a getaway vehicle, and a police escape
+- Property purchases that pay income every two minutes of active play
+
+The phone provides contacts, job messages, dispatch calls, radio control, Pocket Snake, and Memory Pairs. Trusted residents can meet you at your shared location. Lotus Threads sells persistent outfits, and the Lotus Sound Truck supplies nearby synthesized music. Ceylon Social Club runs adult-only, fully clothed performances from 18:00 to 04:00 for players whose self-reported profile age is 18 or older. The game also includes elevated, shoulder, and first-person cameras, a driving chase camera, first-person weapon models, free mouse look, and camera collision.
 
 ## Controls
 
 | Control | Action |
 | --- | --- |
-| WASD / arrows | Walk; accelerate, reverse and steer when driving |
+| WASD / arrows | Walk, or accelerate, reverse, and steer while driving |
 | Shift / Ctrl | Sprint / slow walk |
 | C / B / Alt | Crouch / take or leave cover / dodge |
-| E | Talk, interact, enter/exit a building |
-| F | Enter/exit a nearby stopped vehicle |
-| 1 / 2 / 3 | Fists / pistol / carbine |
+| E | Talk, interact, or enter and exit a building |
+| F | Enter or exit a nearby stopped vehicle |
+| 1 / 2 / 3 / 4 | Fists / pistol / carbine / bazooka |
 | Left click | Attack toward the cursor or crosshair |
 | R | Reload |
-| V | Cycle elevated, shoulder and first-person cameras |
-| Mouse movement / click | Look around in close views; click captures the pointer, Escape releases it |
-| Q / mouse wheel | Rotate / zoom elevated view |
-| Space | Jump on foot / handbrake in a road vehicle / ascend in flight |
+| V | Cycle elevated, shoulder, and first-person cameras |
+| Mouse movement / click | Look around in shoulder or first-person view. Click captures the pointer; Escape releases it. |
+| Q / mouse wheel | Rotate or zoom the elevated view |
+| Space | Jump on foot, handbrake in a road vehicle, or ascend in flight |
 | Ctrl in flight | Descend |
-| X / K | Toggle owned jetpack / deploy owned parachute above 5 m |
-| G / T / Y / L | Throw grenade / place C4 on the ground / detonate local charges / launch missile |
+| X / K | Toggle an owned jetpack / deploy an owned parachute above 5 m |
+| G / T / Y / L | Grenade / C4 / detonate C4 / missile |
 | I / Backtick | Equipment / sandbox codes |
 | H | Horn |
-| J / N | Phone / change vehicle radio station |
-| M | Map; click to place a waypoint |
-| Tab | Journal, contacts and relationships |
+| J / N | Phone / next vehicle radio station |
+| O | City jobs |
+| M | Map and waypoint |
+| Tab | Journal, contacts, and relationships |
 | P | Save |
-| Escape | Settings / close a menu |
+| Escape | Settings or close a menu |
 
-Touch devices have movement, interaction, vehicle, brake/jump, held fire, equipment, reload, crouch and dodge buttons. Drag on the world to look in shoulder/first-person view, or point the elevated-view aim. Settings includes look sensitivity and Low/Balanced/High graphics. Low reduces shadows, local lights, particles and render resolution; touch devices select it by default.
+Touch controls include movement, interaction, vehicle entry, brake or jump, held fire, equipment, reload, crouch, and dodge. Drag the world to look in shoulder or first-person view. Touch devices use the Low graphics preset by default.
 
-## Time, weather, audio and persistence
+## Sandbox codes
 
-A city day takes 24 minutes of active simulation. Morning, afternoon, evening and dark night change lighting, street lamps, windows, headlights, routines and ambience. Settings can preview a time of day or weather.
+Open Equipment with **I**, or press Backtick for codes. `RUNFAST`, `SKYHIGH`, `AIRFLEET`, `ARMORY`, `POCKETS`, `PEACE`, and `ARMOR` are available. `HOPUP`, `SQUAD`, and `TEMPEST` are also available in the equipment menu. Movement, fuel, and invulnerability modifiers apply only to the current session. Equipment and money save normally.
 
-Natural weather updates every 90 active seconds. Rain changes visibility, road reflectivity, braking/steering, pedestrian behavior and audio. Snow has a 14% natural-weather chance only in the northern highlands (`z < -100`); elsewhere the snow preview produces overcast skies.
+## Save, weather, and audio
 
-Original Web Audio synthesis provides engines, footsteps, horns, gunshots, reloads, impacts, police/ambulance sirens, helicopter rotor audio, doors, interaction/reward cues, wind, rain, birds and insects. Club beats use original synthesized percussion, bass and chords. Bicycles do not play an engine sound. There are no downloaded recordings.
+A city day lasts 24 minutes of active simulation. Lighting, lamps, windows, headlights, routines, and ambient sound change across morning, afternoon, evening, and night. Weather updates every 90 active seconds. Rain affects visibility, road handling, pedestrian behavior, and sound. Natural snow appears only in the northern highlands (`z < -100`) with a 14% chance; choosing snow elsewhere previews overcast weather.
 
-Autosave runs every 20 seconds, after important transactions, and when leaving the page. Saves include position, health, city time, money, reputation, owned/stolen parked vehicles, driving state, inventory, active delivery, personal favor, story progress/choice, factions, properties, vault-job stage, wanted level, discovered districts, and resident memories/deaths. Existing version-1 saves migrate to version 2 under the same `maya-city-v1` local-storage key. Active emergency routes, loose blood, and precise resident walking positions are regenerated. Faction job stages, district influence and race records are also saved. Active races restart from the race marker after loading. Building work orders, equipment quantities and aircraft access are saved. Airborne saves return you safely to the depot; active flight, fuel, placed charges, projectiles and aircraft damage/positions are session state. Family/club background actors do not have persistent combat or relationship records. Settings → Save slots offers three independent manual snapshots. Loading one backs up the previous autosave under `maya-before-load`; it does not overwrite the other manual snapshots. Graphics and look sensitivity are stored separately. Storage failures are reported in the HUD.
+The game synthesizes engines, footsteps, horns, gunshots, reloads, impacts, sirens, rotor sound, doors, wind, rain, birds, insects, and club music with Web Audio. It does not include downloaded audio recordings.
 
-## Source layout
+Autosave runs every 20 seconds, after important transactions, and when you leave the page. Saves include position, health, city time, money, reputation, owned and stolen parked vehicles, inventory, active delivery and favor state, story choices, factions, properties, vault-job state, wanted level, discoveries, resident memories and deaths, building work, equipment, aircraft access, faction jobs, district influence, and race records. Existing version-1 saves migrate to version 2 under `maya-city-v1`. Active emergency routes, loose blood, exact pedestrian positions, projectiles, placed charges, and active flight are session state. Airborne saves return the player to the depot. Three manual save slots are available in Settings. Loading a slot backs up the current autosave under `maya-before-load` without replacing the other slots. Graphics and look sensitivity are stored separately.
 
-`physics.js` contains shared collision and A* navigation; `world.js` builds exterior geometry; `actor-models.js` builds articulated people and vehicle variants; `vehicles.js` simulates traffic and driving; `residents.js` defines identities and routines; `interiors.js` creates indoor scenes; `combat.js` handles weapons, damage and transient effects; `emergency.js` handles police, ambulances and helicopters; `atmosphere.js` and `audio.js` handle weather/lighting/sound; `systems.js` defines data and save validation; `map.js` draws maps; `tactics.js` handles player stances and detection rules; `city-activities.js` defines race courses, faction jobs and district influence; `racing.js` drives the rival cars; `encounters.js` stores the harbor-story rules; `saves.js` manages manual snapshots; `preferences.js` defines graphics presets; `mobility-models.js` builds bicycles and aircraft; `flight.js` handles flight/fuel/parachutes; `ordnance.js` handles timed projectiles and damage falloff; `families.js` handles background school routines; `interior-activities.js` validates work-order progress; `main.js` connects controls, UI, missions and the simulation.
+## Develop and test
 
-The existing Kenney trees/rocks and generated pines, frostpines and lanterns are reused. New world and character geometry is authored in code. See [THIRD_PARTY.md](THIRD_PARTY.md) for provenance and licenses.
+```sh
+npm run build            # Production files in dist/
+npm run preview          # Serve the production build
+npm test                 # Unit tests
+npm run test:browser     # Browser tests, with the dev server on port 5173
+npm run test:production  # Production browser tests, with preview on port 4173
+```
 
+Set `MAYA_URL` to test another server address. Browser tests use Playwright Chromium. Development browser tests can use a deterministic simulation harness at `?test`; production builds exclude it.
 
-## Brand assets and publishing
+`world.js` builds the exterior city, `physics.js` handles collision and navigation, `vehicles.js` handles traffic and driving, `emergency.js` handles police and ambulances, and `main.js` connects controls, UI, missions, and simulation. The full source map is documented in [DEVELOPMENT.md](DEVELOPMENT.md).
 
-Run `npm run assets:brand` to regenerate the social image and PNG icons directly from the supplied SVG emblem with Playwright. The manifest describes the app; there is no service worker or offline cache. Before public deployment, use the actual deployment origin for absolute Open Graph/Twitter image URLs and add a canonical URL in `index.html`. No deployment hostname has been assumed.
+## Assets and publishing
 
-### City life update (0.11)
+The project reuses licensed Kenney scenery with generated pines, frost pines, and lanterns. New city and character geometry is authored in code. The supplied elephant emblem defines the ivory, charcoal, burgundy, and olive palette used across the HUD, menus, and map. See [THIRD_PARTY.md](THIRD_PARTY.md) for licenses and provenance.
 
-Enter your name and age on first launch; the profile stays on this device. Club entry requires a self-reported age of 18+. The club adds drinks, adult social scenes and a fully clothed seated performance.
-
-Press **O** for taxi, ambulance, courier and walking-escort jobs. Complete three favors for a resident to unlock recruitment; manage up to three companions in the journal. Press **M** for searchable maps, zoom, route pins and filters. Houses now have exterior-view windows. Armed officers patrol on foot, civilians fight or flee, cash drops can be collected, and **4** equips a purchased bazooka. Police cars and ambulances are drivable.
-
-Use **Shift** to sprint and **Space** to jump. The equipment menu’s sandbox codes include `RUNFAST`, `HOPUP`, `SQUAD`, `ARMORY` and `TEMPEST`. Dogs can be befriended; deer flee and boars can charge. Tornadoes appear rarely in rainy rural areas or through the weather/code controls. Buildings shelter you from wind.
-
-Current limitations and validation are recorded in [DEVELOPMENT.md](DEVELOPMENT.md). Removed public assets are listed in [the cleanup audit](docs/asset-audit.json); retained licenses are described in [THIRD_PARTY.md](THIRD_PARTY.md).
-
-### Shops, police recovery and phone (0.12)
-
-Press **J** or the phone icon for contacts, job messages, radio and two playable games. Ask residents to **Exchange numbers** while talking; trusted contacts can meet at your location. Call police or an ambulance and share your location or a map pin. Available units drive there, with a final approach on foot; services report when busy.
-
-Find **Lotus Threads** through map search. Inspect its mannequins, preview an outfit and buy/wear it; your clothing also appears while driving and survives reload. Shops and conversations now have animated participants, item previews, rotation and handover feedback. Weapon counters have individual physical displays.
-
-Press **N** to cycle the vehicle radio. The **Lotus Sound Truck** travels the southern roads with speaker music audible nearby and is also available from the dealership. Music is synthesized locally. Police now route around nearby obstructions, retry unreachable paths on a timer and reverse/replan stalled vehicles.
+Run `npm run assets:brand` to rebuild the social image and PNG icons from the supplied SVG emblem. The manifest is included, but the project has no service worker or offline cache. Before deployment, set the actual canonical and social-image URLs in `index.html`.
