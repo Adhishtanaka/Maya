@@ -1,0 +1,99 @@
+{
+  "reason": "Runtime references audited in src, index.html and web manifest. Retained license and provenance accompany the models still used.",
+  "retained": [
+    "/assets/generated/README.md",
+    "/assets/generated/lantern.glb",
+    "/assets/generated/pine-frost.glb",
+    "/assets/generated/pine.glb",
+    "/assets/maya-emblem.svg",
+    "/assets/maya-social.png",
+    "/assets/nature/LICENSE.txt",
+    "/assets/nature/stone_largeC.glb",
+    "/assets/nature/tree_blocks.glb",
+    "/assets/nature/tree_blocks_dark.glb",
+    "/icons/maya-180.png",
+    "/icons/maya-192.png",
+    "/icons/maya-32.png",
+    "/icons/maya-512.png",
+    "/site.webmanifest"
+  ],
+  "removed": [
+    {
+      "path": "public/assets/PixelifySans-OFL.txt",
+      "bytes": 4488
+    },
+    {
+      "path": "public/assets/PixelifySans.ttf",
+      "bytes": 79160
+    },
+    {
+      "path": "public/assets/generated/cattails.glb",
+      "bytes": 6636
+    },
+    {
+      "path": "public/assets/generated/crystal.glb",
+      "bytes": 3856
+    },
+    {
+      "path": "public/assets/generated/dock.glb",
+      "bytes": 9448
+    },
+    {
+      "path": "public/assets/generated/driftwood.glb",
+      "bytes": 3852
+    },
+    {
+      "path": "public/assets/generated/fish-gold.glb",
+      "bytes": 6644
+    },
+    {
+      "path": "public/assets/generated/fish-perch.glb",
+      "bytes": 6644
+    },
+    {
+      "path": "public/assets/generated/fishing-rod.glb",
+      "bytes": 4764
+    },
+    {
+      "path": "public/assets/generated/lily-pad.glb",
+      "bytes": 4748
+    },
+    {
+      "path": "public/assets/generated/manifest.json",
+      "bytes": 299
+    },
+    {
+      "path": "public/assets/generated/mushroom-glow.glb",
+      "bytes": 5688
+    },
+    {
+      "path": "public/assets/generated/mushroom-red.glb",
+      "bytes": 5688
+    },
+    {
+      "path": "public/assets/generated/ruin-arch.glb",
+      "bytes": 6652
+    },
+    {
+      "path": "public/assets/nature/campfire_stones.glb",
+      "bytes": 17344
+    },
+    {
+      "path": "public/assets/nature/flower_purpleA.glb",
+      "bytes": 7112
+    },
+    {
+      "path": "public/assets/nature/flower_yellowA.glb",
+      "bytes": 7120
+    },
+    {
+      "path": "public/assets/nature/log_stack.glb",
+      "bytes": 10896
+    },
+    {
+      "path": "public/assets/nature/stone_largeD.glb",
+      "bytes": 7564
+    }
+  ],
+  "removedBytes": 198603
+}
